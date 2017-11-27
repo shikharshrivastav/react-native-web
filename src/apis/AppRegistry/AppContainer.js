@@ -20,6 +20,7 @@ type Context = {
 
 type Props = {
   children?: React.Children,
+  WrapperComponent?: ?React.ComponentType<*>,
   rootTag: any
 };
 
@@ -47,14 +48,22 @@ export default class AppContainer extends Component {
   }
 
   render() {
-    return (
-      <View pointerEvents="box-none" style={[styles.appContainer, StyleSheet.absoluteFill]}>
+    let innerView = (
         <View
           children={this.props.children}
           key={this.state.mainKey}
           pointerEvents="box-none"
           style={styles.appContainer}
         />
+    );
+    const Wrapper = this.props.WrapperComponent;
+
+     if (Wrapper) {
+       innerView = <Wrapper>{innerView}</Wrapper>;
+     }
+    return (
+      <View pointerEvents="box-none" style={[styles.appContainer, StyleSheet.absoluteFill]}>
+        {innerView}
       </View>
     );
   }
