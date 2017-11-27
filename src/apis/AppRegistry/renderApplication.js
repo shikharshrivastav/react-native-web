@@ -18,12 +18,13 @@ import React from 'react';
 export default function renderApplication(
   RootComponent: ReactClass<Object>,
   initialProps: Object,
-  rootTag: any
+  rootTag: any,
+  WrapperComponent?: ?React.ComponentType<*>,
 ) {
   invariant(rootTag, 'Expect to have a valid rootTag, instead got ', rootTag);
 
   render(
-    <AppContainer rootTag={rootTag}>
+    <AppContainer rootTag={rootTag} WrapperComponent={WrapperComponent}>
       <RootComponent {...initialProps} />
     </AppContainer>,
     rootTag

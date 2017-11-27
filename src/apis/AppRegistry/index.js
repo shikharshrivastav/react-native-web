@@ -25,12 +25,21 @@ export type AppConfig = {
   run?: Function
 };
 
+export type WrapperComponentProvider = any => React$ComponentType<*>;
+
+let wrapperComponentProvider: ?WrapperComponentProvider;
+
 /**
  * `AppRegistry` is the JS entry point to running all React Native apps.
  */
 export default class AppRegistry {
   static getAppKeys(): Array<string> {
     return Object.keys(runnables);
+  }
+
+
+  static setWrapperComponentProvider(provider: WrapperComponentProvider) {
+    this.wrapperComponentProvider = provider;
   }
 
   static getApplication(appKey: string, appParameters?: Object): string {
@@ -47,8 +56,11 @@ export default class AppRegistry {
     runnables[appKey] = {
       getApplication: ({ initialProps } = emptyObject) =>
         getApplication(getComponentFunc(), initialProps),
-      run: ({ initialProps = emptyObject, rootTag }) =>
-        renderApplication(getComponentFunc(), initialProps, rootTag)
+      run: (appParameters)) => {
+        { initialProps = emptyObject, rootTag } = appParameters;
+        return renderApplication(getComponentFunc(), initialProps, rootTag, wrapperComponentProvider && wrapperComponentProvider(appParameters));
+      }
+
     };
     return appKey;
   }
